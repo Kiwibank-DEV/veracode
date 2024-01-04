@@ -46,6 +46,7 @@ jobs:
       - name: Initialize and figure out packages
         run: |
           if [[ "${{ steps.check-go-mod.outputs.go_mod_exists }}" == "false" ]]; then
+            cd code
             go mod init github.com/${{ inputs.repository }}
             go mod download
             go mod tidy
