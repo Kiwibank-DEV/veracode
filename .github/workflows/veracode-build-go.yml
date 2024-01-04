@@ -22,41 +22,21 @@ jobs:
           repository: ${{ inputs.repository }}
           ref: ${{ inputs.ref }}
           token: ${{ inputs.token }}
-      - name: Check if go.mod exists
-        id: check-go-mod
-        run: |
-          if [ -f "go.mod" ]; then
-            echo "go.mod exists"
-            echo "::set-output name=go_mod_exists::true"
-          else
-            echo "go.mod does not exist"
-            echo "::set-output name=go_mod_exists::false"
-          fi
 
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
           go-version: 1.x
 
-      - name: Install vcgopkg
+      - name: Build
         run: |
-          export GOPATH=`go env GOPATH` &&
-          export PATH="$GOPATH/bin:$PATH" && go install github.com/relaxnow/vcgopkg@latest
-
-      - name: Initialize and figure out packages
-        run: |
-          if [[ "${{ steps.check-go-mod.outputs.go_mod_exists }}" == "false" ]]; then
-            cd code
-            go mod init github.com/${{ inputs.repository }}
-            go mod download
-            go mod tidy
-            go mod vendor
-          fi
-
-      - name: Run build
-        run: go build -o "kbveracode"
+          cd code
+          go mod init github.com/${{ inputs.repository }}
+          go mod download
+          go mod tidy
+          go build -o "kbveracode"
         
       - uses: actions/upload-artifact@v3
         with:
           name: veracode-artifact
-          path: ./veracode
+          path: ./code/veracode
