@@ -31,7 +31,6 @@ jobs:
       - name: Build
         run: |
           cd code
-          go mod init github.com/${{ inputs.repository }}
           go mod download
           go mod tidy
           go build -o "kbveracode"
